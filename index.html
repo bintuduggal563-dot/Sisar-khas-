@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sisar Khas Directory</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    body { background: #f4f6f8; color: #333; padding-bottom: 30px; }
+    header { background: #008080; color: white; padding: 20px 16px; text-align: center; }
+    header h1 { font-size: 20px; margin-bottom: 4px; }
+    header p { font-size: 13px; opacity: 0.9; }
+    .search-box { padding: 12px 16px; }
+    input[type="text"] { width: 100%; padding: 12px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; outline: none; }
+    .filters { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; }
+    .chip { padding: 6px 14px; border-radius: 20px; background: #e0e0e0; font-size: 13px; cursor: pointer; border: none; }
+    .chip.active { background: #008080; color: white; }
+    .list { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; }
+    .card { background: white; padding: 14px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .card h3 { font-size: 16px; color: #111; margin-bottom: 4px; }
+    .card p { font-size: 13px; color: #666; margin-bottom: 6px; }
+    .tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #e0f2f1; color: #00695c; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sisar Khas Directory</h1>
+    <p>Discover community landmarks, parks & chopals</p>
+  </header>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search place or category..." onkeyup="filterPlaces()">
+  </div>
+
+  <div class="filters">
+    <button class="chip active" onclick="setCategory('All', this)">All</button>
+    <button class="chip" onclick="setCategory('Park', this)">Park</button>
+    <button class="chip" onclick="setCategory('Chopal', this)">Chopal</button>
+  </div>
+
+  <div class="list" id="placeList"></div>
+
+  <script>
+    const places = [
+      { name: "Shahid park", category: "Park", address: "Sisar khas" },
+      { name: "Dhanaka ki Chopal", category: "Chopal", address: "Sisar khas" }
+    ];
+
+    let currentCategory = "All";
+
+    function renderList(items) {
+      const container = document.getElementById("placeList");
+      container.innerHTML = "";
+      if(items.length === 0) {
+        container.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>No places found</p>";
+        return;
+      }
+      items.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>📍 ${p.name}</h3>
+          <p>${p.address}</p>
+          <span class="tag">${p.category}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterPlaces() {
+      const query = document.getElementById("search").value.toLowerCase();
+      const filtered = places.filter(p => {
+        const matchesCategory = currentCategory === "All" || p.category.toLowerCase() === currentCategory.toLowerCase();
+        const matchesSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query) || p.address.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+      renderList(filtered);
+    }
+
+    function setCategory(cat, el) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentCategory = cat;
+      filterPlaces();
+    }
+
+    renderList(places);
+  </script>
+</body>
+</html>
