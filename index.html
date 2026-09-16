@@ -103,7 +103,7 @@
 
       items.forEach(p => {
         const marker = L.marker([p.lat, p.lng]).addTo(map);
-        marker.bindPopup(`<b>${p.name}</b><br>${p.category}`);
+        marker.bindPopup(`<b>${p.name}</b><br><a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" style="color:#d32f2f;font-weight:bold;">Google Maps Par Rasta Dekhein ➔</a>`);
         markers.push(marker);
       });
     }
@@ -120,13 +120,9 @@
       items.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
+        // Card dabate hi Google Maps Navigation khulega
         card.onclick = () => {
-          map.flyTo([p.lat, p.lng], 17);
-          markers.forEach(m => {
-            if (m.getLatLng().lat === p.lat && m.getLatLng().lng === p.lng) {
-              m.openPopup();
-            }
-          });
+          window.open(`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`, '_blank');
         };
         card.innerHTML = `
           <div class="card-info">
@@ -134,7 +130,7 @@
             <p>${p.address}</p>
             <span class="tag">${p.category}</span>
           </div>
-          <span class="view-btn">View on Map ➔</span>
+          <span class="view-btn">Rasta Dekhein ➔</span>
         `;
         container.appendChild(card);
       });
