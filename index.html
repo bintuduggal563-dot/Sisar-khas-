@@ -157,5 +157,11 @@
     renderList(places);
     updateMarkers(places);
   </script>
+     if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+
+  
 </body>
 </html>
