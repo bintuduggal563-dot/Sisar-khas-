@@ -3,66 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sisar Khas Directory</title>
+  <title>Mera Gaon Sisar Khas</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23ff3838'/><text x='50' y='58' font-size='16' fill='%23f1c40f' text-anchor='middle'>गांव</text></svg>">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
-    body { background: #f4f6f8; color: #333; padding-bottom: 30px; }
-    header { background: #008080; color: white; padding: 20px 16px; text-align: center; }
-    header h1 { font-size: 20px; margin-bottom: 4px; }
-    header p { font-size: 13px; opacity: 0.9; }
-    .search-box { padding: 12px 16px; }
-    input[type="text"] { width: 100%; padding: 12px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; outline: none; }
-    .filters { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; }
-    .chip { padding: 6px 14px; border-radius: 20px; background: #e0e0e0; font-size: 13px; cursor: pointer; border: none; }
-    .chip.active { background: #008080; color: white; }
-    .list { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; }
-    .card { background: white; padding: 14px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-    .card h3 { font-size: 16px; color: #111; margin-bottom: 4px; }
-    .card p { font-size: 13px; color: #666; margin-bottom: 6px; }
-    .tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #e0f2f1; color: #00695c; font-weight: bold; }
+    body { background: #fdfaf6; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    header { background: #d32f2f; color: white; padding: 12px 16px; text-align: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .logo-svg { width: 52px; height: 52px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); flex-shrink: 0; }
+    .header-text h1 { font-size: 17px; font-weight: bold; letter-spacing: 1px; color: #fff; }
+    .header-text p { font-size: 11px; color: #ffeb3b; font-weight: 500; }
+
+    #map { height: 42vh; width: 100%; flex-shrink: 0; border-bottom: 2px solid #e0e0e0; }
+
+    .controls { padding: 10px 14px; background: white; flex-shrink: 0; }
+    input[type="text"] { width: 100%; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 8px; }
+    input[type="text"]:focus { border-color: #d32f2f; }
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .chip { padding: 6px 14px; border-radius: 16px; background: #eee; font-size: 12px; cursor: pointer; border: none; white-space: nowrap; font-weight: 500; }
+    .chip.active { background: #d32f2f; color: white; }
+
+    .list { flex-grow: 1; overflow-y: auto; padding: 10px 14px 40px; display: flex; flex-direction: column; gap: 8px; }
+    .card { background: white; padding: 14px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #d32f2f; }
+    .card-info h3 { font-size: 15px; color: #111; margin-bottom: 3px; }
+    .card-info p { font-size: 12px; color: #666; margin-bottom: 6px; }
+    .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #ffebee; color: #c62828; font-weight: bold; }
+    .view-btn { font-size: 12px; color: #d32f2f; font-weight: bold; background: #fff8f8; padding: 6px 12px; border-radius: 6px; border: 1px solid #d32f2f; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Sisar Khas Directory</h1>
-    <p>Discover community landmarks, parks & chopals</p>
+    <svg class="logo-svg" viewBox="0 0 500 500">
+      <circle cx="250" cy="250" r="245" fill="#e62626"/>
+      <circle cx="250" cy="250" r="230" fill="none" stroke="#f1c40f" stroke-width="4" stroke-dasharray="8,6"/>
+      <path d="M180 230 L250 170 L320 230" fill="none" stroke="#f1c40f" stroke-width="10" stroke-linecap="round"/>
+      <rect x="235" y="200" width="30" height="26" fill="#f1c40f"/>
+      <path d="M130 270 Q250 200 370 270 L380 290 Q250 220 120 290 Z" fill="#27ae60"/>
+      <text x="250" y="340" font-family="sans-serif" font-size="34" font-weight="bold" fill="#f1c40f" text-anchor="middle" letter-spacing="3">MERA GAON</text>
+      <text x="250" y="375" font-family="sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">SISAR KHAS</text>
+    </svg>
+    <div class="header-text">
+      <h1>MERA GAON SISAR KHAS</h1>
+      <p>Local Map & Community Directory</p>
+    </div>
   </header>
 
-  <div class="search-box">
-    <input type="text" id="search" placeholder="Search place or category..." onkeyup="filterPlaces()">
-  </div>
+  <div id="map"></div>
 
-  <div class="filters">
-    <button class="chip active" onclick="setCategory('All', this)">All</button>
-    <button class="chip" onclick="setCategory('Park', this)">Park</button>
-    <button class="chip" onclick="setCategory('Chopal', this)">Chopal</button>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search chopal, park, temple..." onkeyup="filterPlaces()">
+    <div class="filters">
+      <button class="chip active" onclick="setCategory('All', this)">All</button>
+      <button class="chip" onclick="setCategory('Park', this)">Park</button>
+      <button class="chip" onclick="setCategory('Chopal', this)">Chopal</button>
+    </div>
   </div>
 
   <div class="list" id="placeList"></div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script>
+    const map = L.map('map').setView([28.8475, 76.2865], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
     const places = [
-      { name: "Shahid park", category: "Park", address: "Sisar khas" },
-      { name: "Dhanaka ki Chopal", category: "Chopal", address: "Sisar khas" }
+      { 
+        name: "Shahid park", 
+        category: "Park", 
+        address: "Sisar khas",
+        lat: 28.8480, 
+        lng: 76.2870 
+      },
+      { 
+        name: "Dhanaka ki Chopal", 
+        category: "Chopal", 
+        address: "Sisar khas",
+        lat: 28.8465, 
+        lng: 76.2855 
+      }
     ];
 
+    let markers = [];
     let currentCategory = "All";
+
+    function updateMarkers(items) {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      items.forEach(p => {
+        const marker = L.marker([p.lat, p.lng]).addTo(map);
+        marker.bindPopup(`<b>${p.name}</b><br>${p.category}`);
+        markers.push(marker);
+      });
+    }
 
     function renderList(items) {
       const container = document.getElementById("placeList");
       container.innerHTML = "";
+      
       if(items.length === 0) {
-        container.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>No places found</p>";
+        container.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>Koi jagah nahi mili</p>";
         return;
       }
+
       items.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
+        card.onclick = () => {
+          map.flyTo([p.lat, p.lng], 17);
+          markers.forEach(m => {
+            if (m.getLatLng().lat === p.lat && m.getLatLng().lng === p.lng) {
+              m.openPopup();
+            }
+          });
+        };
         card.innerHTML = `
-          <h3>📍 ${p.name}</h3>
-          <p>${p.address}</p>
-          <span class="tag">${p.category}</span>
+          <div class="card-info">
+            <h3>📍 ${p.name}</h3>
+            <p>${p.address}</p>
+            <span class="tag">${p.category}</span>
+          </div>
+          <span class="view-btn">View on Map ➔</span>
         `;
         container.appendChild(card);
       });
@@ -71,11 +143,12 @@
     function filterPlaces() {
       const query = document.getElementById("search").value.toLowerCase();
       const filtered = places.filter(p => {
-        const matchesCategory = currentCategory === "All" || p.category.toLowerCase() === currentCategory.toLowerCase();
-        const matchesSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query) || p.address.toLowerCase().includes(query);
-        return matchesCategory && matchesSearch;
+        const matchesCat = currentCategory === "All" || p.category.toLowerCase() === currentCategory.toLowerCase();
+        const matchesSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
       });
       renderList(filtered);
+      updateMarkers(filtered);
     }
 
     function setCategory(cat, el) {
@@ -86,6 +159,7 @@
     }
 
     renderList(places);
+    updateMarkers(places);
   </script>
 </body>
 </html>
